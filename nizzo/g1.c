@@ -2,10 +2,10 @@
 #include <wchar.h>
 #include <string.h>
 
-typedef struct{
-    char valor[3];
+typedef struct {
+    char valor[4]; // Aumento do tamanho da string para acomodar "10"
     wchar_t naipe;
-}carta;
+} carta;
 
 int valores(carta c1, carta c2){
     char *ordem[14] = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "C", "Q", "K"}; // Oooga booga 1=10
@@ -48,31 +48,31 @@ int valores(carta c1, carta c2){
     }
 }
 
-int combinacao(carta mao[14]){
-    int i=0,n=0,flag=0;
-    for(i=0; mao[i].valor[0] != '\0';i++){
+int combinacao(carta mao[14]) {
+    int i = 0, n = 0, flag = 0;
+    for (i = 0; mao[i].valor[0] != '\0'; i++) {
         n++;
     }
 
     //Conjunto (0)
-    if (n > 0 && n <= 4){
-        for (i = 0; i < 14 && mao[i].valor[0] != '\0'; i++){
-            if (mao[i].valor != mao[i+1].valor || mao[i].naipe == mao[i+1].naipe){
+    if (n > 0 && n <= 4) {
+        for (i = 0; i < 14 && mao[i].valor[0] != '\0'; i++) {
+            if (strcmp(mao[i].valor, mao[i + 1].valor) != 0 || mao[i].naipe == mao[i + 1].naipe) { // Correção da comparação de strings
                 flag = 1;
             }
         }
-        if (flag == 0) return 1;
+        if (flag == 0)
+            return 1;
     }
     //Sequência (1)
     //Dupla Sequência (2)
-    else if(n >= 3){
-        for (i = 0; i < 14 && mao[i].valor[0] != '\0'; i++){
-            if (mao[i].valor != mao[i+1].valor){ // If sequencia
-                if(valores(mao[i],mao[i+1]) != 2){   
-                    return 0; 
+    if (n >= 3) {
+        for (i = 0; i < 14 && mao[i].valor[0] != '\0'; i++) {
+            if (strcmp(mao[i].valor, mao[i + 1].valor) != 0) { // If sequencia
+                if (valores(mao[i], mao[i + 1]) != 2) {
+                    return 0;
                 }
-            }
-            else{
+            } else {
                 return 3;
             }
         }
@@ -81,47 +81,43 @@ int combinacao(carta mao[14]){
     return 0;
 }
 
-int main(){
-    int i=0;
+int main() {
+    int i = 0;
     carta mao[14];
 
     // Inicializa o array
-    for (i = 0; i < 14; i++){
+    for (i = 0; i < 14; i++) {
         mao[i].valor[0] = '\0';
         mao[i].naipe = '\0';
     }
 
-    i=0;
+    i = 0;
 
-    /*while (wscanf(L"%c %lc", &mao[i].valor, &mao[i].naipe) != EOF){ 
-        //wprintf(L"%c %lc", mao[i].valor, mao[i].naipe);
-        i++;
-    }*/
-    while (i<3){  
+    while (i<4){  
         wscanf(L"%s %lc", &mao[i].valor, &mao[i].naipe);
         wprintf(L"%s %lc ", mao[i].valor, mao[i].naipe);
         i++;
     }
 
-    int tipo_combinacao = combinacao(mao); 
+    int tipo_combinacao = combinacao(mao);
 
     switch (tipo_combinacao) {
         case 0:
-            wprintf(L"\nNenhuma combinacao encontrada.\n");
+            printf("\nNenhuma combinacao encontrada.\n");
             break;
         case 1:
-            wprintf(L"\nConjunto encontrado.\n");
+            printf("\nConjunto encontrado.\n");
             break;
         case 2:
-            wprintf(L"\nSequencia encontrada.\n");
+            printf("\nSequencia encontrada.\n");
             break;
         case 3:
-            wprintf(L"\nDupla sequencia encontrada.\n");
+            printf("\nDupla sequencia encontrada.\n");
             break;
         default:
-            wprintf(L"\nTipo de combinacao desconhecido.\n");
+            printf("\nTipo de combinacao desconhecido.\n");
     }
 
-    wprintf(L"Carta mais alta: %s %lc\n", mao[i-1].valor, mao[i-1].naipe);
+    printf("Carta mais alta: %s %lc\n", mao[i - 1].valor, mao[i - 1].naipe); // Correção do acesso ao último elemento
     return 0;
 }
