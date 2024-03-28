@@ -1,24 +1,25 @@
 #include <stdio.h>
 #include <wchar.h>
+#include <string.h>
 
 typedef struct{
-    char valor;
+    char valor[3];
     wchar_t naipe;
 }carta;
 
 int valores(carta c1, carta c2){
-    char ordem[14] = {'A', '2', '3', '4', '5', '6', '7', '8', '9', '1', 'J', 'C', 'Q', 'K'}; // Oooga booga 1=10
+    char *ordem[14] = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "C", "Q", "K"}; // Oooga booga 1=10
     wchar_t ordem2[4] = {L'♠', L'♥', L'♦', L'♣'};
     int i,tc1=0,tc2=0,nc1=0,nc2=0;
     
     for(i=0;i<14;i++){
-        if (c1.valor == ordem[i]){
+        if (strcmp(c1.valor,ordem[i])){
             tc1 = i;
             break;       
         } 
     }
     for(i=0;i<14;i++){
-        if (c2.valor == ordem[i]){
+        if (strcmp(c2.valor,ordem[i])){
             tc2 = i;   
             break;    
         } 
@@ -49,13 +50,13 @@ int valores(carta c1, carta c2){
 
 int combinacao(carta mao[14]){
     int i=0,n=0,flag=0;
-    for(i=0; mao[i].valor !=0;i++){
+    for(i=0; mao[i].valor[0] != '\0';i++){
         n++;
     }
 
     //Conjunto (0)
     if (n > 0 && n <= 4){
-        for (i = 0; i < 14 && mao[i].valor != 0; i++){
+        for (i = 0; i < 14 && mao[i].valor[0] != '\0'; i++){
             if (mao[i].valor != mao[i+1].valor || mao[i].naipe == mao[i+1].naipe){
                 flag = 1;
             }
@@ -65,7 +66,7 @@ int combinacao(carta mao[14]){
     //Sequência (1)
     //Dupla Sequência (2)
     else if(n >= 3){
-        for (i = 0; i < 14 && mao[i].valor != 0; i++){
+        for (i = 0; i < 14 && mao[i].valor[0] != '\0'; i++){
             if (mao[i].valor != mao[i+1].valor){ // If sequencia
                 if(valores(mao[i],mao[i+1]) != 2){   
                     return 0; 
@@ -77,16 +78,17 @@ int combinacao(carta mao[14]){
         }
         return 2;
     }
+    return 0;
 }
 
-void main(){
+int main(){
     int i=0;
     carta mao[14];
 
     // Inicializa o array
     for (i = 0; i < 14; i++){
-        mao[i].valor = 0;
-        mao[i].naipe = 0;
+        mao[i].valor[0] = '\0';
+        mao[i].naipe = '\0';
     }
 
     i=0;
@@ -95,14 +97,13 @@ void main(){
         //wprintf(L"%c %lc", mao[i].valor, mao[i].naipe);
         i++;
     }*/
-    while (i<7){  
-        wscanf(L"%c %lc", &mao[i].valor, &mao[i].naipe);
-        wprintf(L"%c %lc", mao[i].valor, mao[i].naipe);
+    while (i<3){  
+        wscanf(L"%s %lc", &mao[i].valor, &mao[i].naipe);
+        wprintf(L"%s %lc ", mao[i].valor, mao[i].naipe);
         i++;
     }
 
-    int tipo_combinacao = combinacao(mao);
-    char carta_alta = mao[i - 1].valor; 
+    int tipo_combinacao = combinacao(mao); 
 
     switch (tipo_combinacao) {
         case 0:
@@ -121,15 +122,6 @@ void main(){
             wprintf(L"\nTipo de combinacao desconhecido.\n");
     }
 
-    wprintf(L"Carta mais alta: %c\n", carta_alta);
+    wprintf(L"Carta mais alta: %s %lc\n", mao[i-1].valor, mao[i-1].naipe);
+    return 0;
 }
-
-//Dado um conjunto de cartas imprimir qual é o tipo de combinação que este conjunto de cartas representa e qual
-// é a carta mais alta da combinação. 
-
-// Combinações: 
-/*
--> Conjunto: de uma até quatro cartas todas com o *mesmo valor* mas de naipes diferentes;
--> Sequência: de três ou mais cartas de *valores* consecutivos (não necessariamente todas do mesmo naipe);
--> Dupla sequência: de três ou mais pares de valores consecutivos.
-*/
